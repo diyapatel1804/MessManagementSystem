@@ -1,0 +1,36 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MessManagementAPI.Data;
+
+namespace MessManagementAPI.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AdminController : ControllerBase
+    {
+        private readonly MessDbContext _context;
+
+        public AdminController(MessDbContext context)
+        {
+            _context = context;
+        }
+
+        // 🔥 DELETE ALL DATA FROM ALL TABLES
+        [HttpDelete("reset")]
+        public async Task<IActionResult> ResetAllData()
+        {
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM Complaints");
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM Students");
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM Inventory");
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM Meals");
+
+            // 🔥 Reset IDs
+            await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Complaints', RESEED, 0)");
+            await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Students', RESEED, 0)");
+            await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Inventory', RESEED, 0)");
+            await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Meals', RESEED, 0)");
+
+            return Ok("All data deleted successfully");
+        }
+    }
+}

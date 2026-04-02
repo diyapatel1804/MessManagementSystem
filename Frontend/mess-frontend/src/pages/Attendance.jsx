@@ -7,6 +7,7 @@ function Attendance() {
   const [attendance, setAttendance] = useState([]);
 
   const [studentId, setStudentId] = useState("");
+  const [studentName, setStudentName] = useState(""); // new manual name
   const [date, setDate] = useState("");
   const [mealType, setMealType] = useState("Breakfast");
 
@@ -40,19 +41,21 @@ function Attendance() {
   const markAttendance = async (e) => {
     e.preventDefault();
 
-    if (!studentId || !date || !mealType) {
+    if ((!studentId && !studentName) || !date || !mealType) {
       alert("Fill all fields");
       return;
     }
 
     try {
       await API.post("/MealAttendances", {
-        studentId,
+        studentId: studentId || null,
+        studentName: studentName || null, // use manual name if no ID
         date,
         mealType
       });
 
       setStudentId("");
+      setStudentName("");
       setDate("");
       setMealType("Breakfast");
 
@@ -76,7 +79,8 @@ function Attendance() {
 
   // 🔍 SEARCH
   const filtered = attendance.filter(a =>
-    a.studentId.toString().includes(search)
+    a.studentId?.toString().includes(search) ||
+    a.studentName?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -86,7 +90,7 @@ function Attendance() {
 
       {/* 🔍 SEARCH */}
       <input
-        placeholder="Search by Student ID..."
+        placeholder="Search by Student ID or Name..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         style={{
@@ -106,9 +110,13 @@ function Attendance() {
       }}>
         <form onSubmit={markAttendance}>
 
+          {/* Dropdown + Manual Name */}
           <select
             value={studentId}
-            onChange={(e) => setStudentId(e.target.value)}
+            onChange={(e) => {
+              setStudentId(e.target.value);
+              setStudentName(""); // clear manual name if dropdown is used
+            }}
             style={{ marginRight: "10px", padding: "8px" }}
           >
             <option value="">Select Student</option>
@@ -118,6 +126,17 @@ function Attendance() {
               </option>
             ))}
           </select>
+
+          <input
+            type="text"
+            placeholder="Or enter student name"
+            value={studentName}
+            onChange={(e) => {
+              setStudentName(e.target.value);
+              setStudentId(""); // clear dropdown if manual name is used
+            }}
+            style={{ marginRight: "10px", padding: "8px" }}
+          />
 
           <input
             type="date"
@@ -171,11 +190,12 @@ function Attendance() {
             {filtered.length > 0 ? (
               filtered.map((a) => {
                 const student = students.find(s => s.id === a.studentId);
+                const nameToShow = student ? student.name : a.studentName || a.studentId;
 
                 return (
                   <tr key={a.id}>
                     <td>{a.id}</td>
-                    <td>{student ? student.name : a.studentId}</td>
+                    <td>{nameToShow}</td>
                     <td>
                       {a.date
                         ? new Date(a.date + "T00:00:00").toLocaleDateString("en-IN")

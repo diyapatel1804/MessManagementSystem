@@ -19,5 +19,7 @@ namespace MessManagementAPI.Data
         public DbSet<Payment> Payments { get; set; }
 
         public DbSet<Complaint> Complaints { get; set; }
+
+        public DbSet<Notification> Notifications { get; set; }
     }
 }

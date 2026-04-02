@@ -7,7 +7,8 @@ import Payments from "./pages/Payments";
 import Complaints from "./pages/Complaints";
 import Attendance from "./pages/Attendance";
 import Inventory from "./pages/Inventory";
-import Login from "./pages/Login"; // 👈 ADD THIS
+import Notifications from "./pages/Notifications"; // ✅ keep this
+import Login from "./pages/Login";
 
 function App() {
   return (
@@ -17,16 +18,24 @@ function App() {
         {/* 🔹 LOGIN ROUTE */}
         <Route path="/login" element={<Login />} />
 
-        {/* 🔹 PROTECTED ROUTES */}
+        {/* 🔹 MAIN LAYOUT ROUTES */}
         <Route path="/" element={<Layout />}>
+
+          {/* Default page */}
           <Route index element={<Dashboard />} />
-          <Route path="dashboard" element={<Dashboard />} /> {/* added */}
+
+          {/* All modules */}
+          <Route path="dashboard" element={<Dashboard />} />
           <Route path="students" element={<Students />} />
           <Route path="mealmenu" element={<MealMenu />} />
           <Route path="payments" element={<Payments />} />
           <Route path="complaints" element={<Complaints />} />
           <Route path="attendance" element={<Attendance />} />
-          <Route path="/inventory" element={<Inventory />} />
+          <Route path="inventory" element={<Inventory />} />
+
+          {/* ✅ NEW NOTIFICATIONS MODULE */}
+          <Route path="notifications" element={<Notifications  />} />
+
         </Route>
 
       </Routes>

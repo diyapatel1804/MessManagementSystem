@@ -7,6 +7,7 @@ function Payments() {
   const [students, setStudents] = useState([]);
 
   const [studentId, setStudentId] = useState("");
+  const [studentName, setStudentName] = useState(""); // new manual name
   const [amount, setAmount] = useState("");
   const [paymentDate, setPaymentDate] = useState("");
 
@@ -40,9 +41,14 @@ function Payments() {
   // ADD / UPDATE PAYMENT
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!studentId || !amount || !paymentDate) return;
+    if ((!studentId && !studentName) || !amount || !paymentDate) return;
 
-    const data = { studentId, amount, paymentDate };
+    const data = {
+      studentId: studentId || null,
+      studentName: studentName || null, // use manual name if no ID
+      amount,
+      paymentDate
+    };
 
     if (editId) {
       await API.put(`/Payments/${editId}`, { id: editId, ...data });
@@ -52,6 +58,7 @@ function Payments() {
     }
 
     setStudentId("");
+    setStudentName("");
     setAmount("");
     setPaymentDate("");
     loadPayments();
@@ -65,7 +72,8 @@ function Payments() {
 
   // FILTER PAYMENTS
   const filtered = payments.filter(p =>
-    p.studentId.toString().includes(search)
+    p.studentId?.toString().includes(search) ||
+    p.studentName?.toLowerCase().includes(search.toLowerCase())
   );
 
   // TOTAL AMOUNT
@@ -135,7 +143,7 @@ function Payments() {
       {/* SEARCH */}
       <input
         className="search"
-        placeholder="Search by Student ID..."
+        placeholder="Search by Student ID or Name..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
@@ -144,16 +152,30 @@ function Payments() {
       <div className="form-card">
         <form onSubmit={handleSubmit}>
           <div className="form-grid">
+            {/* Dropdown for existing students */}
             <select
               value={studentId}
-              onChange={(e) => setStudentId(e.target.value)}
-              required
+              onChange={(e) => {
+                setStudentId(e.target.value);
+                setStudentName(""); // clear manual name if dropdown is used
+              }}
             >
               <option value="">Select Student</option>
               {students.map((s) => (
                 <option key={s.id} value={s.id}>{s.name}</option>
               ))}
             </select>
+
+            {/* Manual student name input */}
+            <input
+              type="text"
+              placeholder="Or enter student name"
+              value={studentName}
+              onChange={(e) => {
+                setStudentName(e.target.value);
+                setStudentId(""); // clear dropdown if manual name is used
+              }}
+            />
 
             <input
               type="number"
@@ -221,10 +243,11 @@ function Payments() {
             {filtered.length > 0 ? (
               filtered.map((p) => {
                 const student = students.find(s => s.id === p.studentId);
+                const nameToShow = student ? student.name : p.studentName || p.studentId;
                 return (
                   <tr key={p.id}>
                     <td>{p.id}</td>
-                    <td>{student ? student.name : p.studentId}</td>
+                    <td>{nameToShow}</td>
                     <td>₹{p.amount}</td>
                     <td>{p.paymentDate
                       ? new Date(p.paymentDate + "T00:00:00").toLocaleDateString("en-IN")
@@ -236,6 +259,7 @@ function Payments() {
                         onClick={() => {
                           setEditId(p.id);
                           setStudentId(p.studentId);
+                          setStudentName(p.studentName || "");
                           setAmount(p.amount);
                           setPaymentDate(p.paymentDate?.slice(0,10));
                         }}

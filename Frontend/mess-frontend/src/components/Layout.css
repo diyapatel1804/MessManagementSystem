@@ -1,4 +1,3 @@
-/* Reset */
 * {
   margin: 0;
   padding: 0;
@@ -9,59 +8,107 @@
 .app {
   display: flex;
   height: 100vh;
+  font-family: "Segoe UI", sans-serif;
   background: #f1f5f9;
   color: #111827;
-  font-family: "Segoe UI", sans-serif;
 }
 
 /* Dark Mode */
 .app.dark {
-  background: #0f172a;
+  background: #5397d2;
   color: #e2e8f0;
 }
 
 /* Sidebar */
 .sidebar {
-  width: 220px;
-  background: #1e293b;
+  width: 240px;
+  background: #5b21b6; /* main purple */
   color: white;
   padding: 20px;
-  flex-shrink: 0;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
+  transition: background 0.3s;
+  overflow-y: auto;
 }
 
-.sidebar h2 {
-  margin-bottom: 20px;
+.app.dark .sidebar {
+  background: #837ccb; /* dark purple */
 }
 
-.sidebar a {
+.sidebar h2.logo {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+/* Sidebar Sections */
+.sidebar-section {
+  margin-bottom: 25px;
+}
+
+.section-title {
+  color: #d1d5db;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  padding-left: 5px;
+  letter-spacing: 0.5px;
+}
+
+/* Nav Links */
+.nav-link {
+  display: flex;
+  align-items: center;
   text-decoration: none;
-  color: #cbd5f5;
-  margin: 8px 0;
+  color: #cbd5e1;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
 }
 
-.sidebar a:hover {
+.nav-link:hover {
+  background: #7c3aed;
   color: white;
+  transform: translateX(3px);
 }
 
-/* Logout */
+/* Colors for Categories */
+.sidebar-section:nth-child(2) .nav-link { /* Student & Menu */
+  background: #ad80d733; /* semi-transparent */
+}
+.sidebar-section:nth-child(3) .nav-link { /* Financial */
+  background: #f59e0b33;
+}
+.sidebar-section:nth-child(4) .nav-link { /* Operations */
+  background: #10b98133;
+}
+
+.sidebar-section:nth-child(2) .nav-link:hover { background: #9333ea; }
+.sidebar-section:nth-child(3) .nav-link:hover { background: #f59e0b; }
+.sidebar-section:nth-child(4) .nav-link:hover { background: #10b981; }
+
+/* Logout Button */
 .logout-btn {
   margin-top: auto;
-  padding: 10px;
+  padding: 12px 15px;
+  background: #ef4444;
   border: none;
-  background: #3b82f6;
-  color: white;
   border-radius: 8px;
+  color: white;
   cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
 }
 
-/* Dark Sidebar */
-.app.dark .sidebar {
-  background: #020617;
+.logout-btn:hover {
+  background: #dc2626;
 }
 
-/* Main */
+/* Main Layout */
 .main {
   flex: 1;
   display: flex;
@@ -76,59 +123,66 @@
   justify-content: flex-end;
   align-items: center;
   padding: 0 20px;
+  background: #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-/* Dark Topbar */
 .app.dark .topbar {
-  background: #020617;
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
 }
 
-/* Toggle Button (FIXED SIZE & POSITION) */
+/* Theme Toggle */
 .theme-toggle {
   width: 36px;
   height: 36px;
   border-radius: 50%;
   border: none;
-  background: #6366f1;
+  background: #4f46e5;
   color: white;
   font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  margin-left: 10px;
   transition: 0.3s;
 }
 
 .theme-toggle:hover {
-  background: #4f46e5;
+  background: #7c3aed;
   transform: scale(1.1);
 }
 
-/* Content */
+/* Content Area */
 .content {
   flex: 1;
-  padding: 20px;
+  padding: 25px;
   overflow-y: auto;
-  background: #f1f5f9;
+  background: #f9fafb;
+  transition: background 0.3s;
 }
 
-/* Dark Content */
 .app.dark .content {
-  background: #0f172a;
+  background: #111827;
+  color: #e2e8f0;
 }
 
-/* Fix Forms + Cards + Tables */
-.app.dark input,
-.app.dark select,
-.app.dark textarea {
-  background: #1e293b !important;
-  color: #e2e8f0 !important;
-  border: 1px solid #334155;
+/* Scrollbar styling */
+.sidebar::-webkit-scrollbar,
+.content::-webkit-scrollbar {
+  width: 6px;
 }
 
-.app.dark .form,
-.app.dark .card,
-.app.dark table {
-  background: #1e293b !important;
-  color: white;
+.sidebar::-webkit-scrollbar-thumb,
+.content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+/* Smooth hover & transitions */
+.nav-link,
+.logout-btn,
+.theme-toggle {
+  transition: all 0.3s ease;
 }
